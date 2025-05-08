@@ -1,0 +1,17 @@
+.networks_container {
+    .title {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+
+        div {
+            padding: 2rem;
+            text-align: center;
+            width: 6vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            border-bottom: 2px solid black;
+        }
+    }
+}

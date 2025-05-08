@@ -1,0 +1,14 @@
+.seen_network_entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+    div {
+        margin: 1rem;
+        width: 8vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

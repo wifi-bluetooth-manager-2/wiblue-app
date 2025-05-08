@@ -1,0 +1,35 @@
+// Core Colors
+$wb-primary: #f8f8f8;
+$wb-text: #1a1a1a;
+$wb-white: #ffffff;
+$wb-gray: #4b5563;
+// Accent Colors
+$wb-yellow: #ffd60a;
+$youai-light-red: #ff3b30;
+$wb-accent-blue: #3b82f6;
+$wb-accent-green: #10b981;
+
+// Input Colors
+$wb-input-bg: #f1f1f1;
+$wb-input-text: $wb-text;
+$wb-input-border: #d1d5db;
+
+// Focus Colors
+$wb-focus-bg: #eff6ff;
+$wb-focus-text: #1e3a8a;
+$wb-focus-border: #2563eb;
+
+// Hover Colors
+$wb-hover-bg: #4b5563;
+$wb-hover-text: $wb-white;
+$wb-hover-border: $wb-accent-blue;
+
+// Active Colors
+$wb-active-bg: #111827;
+$wb-active-text: #e5e7eb;
+$wb-active-border: $wb-accent-green;
+
+// Additional Colors
+$wb-disabled-bg: #e5e7eb;
+$wb-disabled-text: #9ca3af;
+$wb-shadow: rgba(0, 0, 0, 0.1);

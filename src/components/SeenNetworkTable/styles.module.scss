@@ -1,0 +1,16 @@
+.networks_container {
+  .title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+    div {
+      margin: 1rem;
+      text-align: center;
+      width: 8vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

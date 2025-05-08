@@ -1,0 +1,158 @@
+.statsContainer {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .header {
+        margin-bottom: 2rem;
+        color: #3b82f6; // primary-color (blue-500)
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+
+        &.error {
+            background-color: rgba(239, 68, 68, 0.1); // error-color (red-500)
+            border: 1px solid #ef4444; // error-color
+            color: #991b1b; // darken(error-color, 20%)
+        }
+
+        &.loading {
+            background-color: rgba(59, 130, 246, 0.1); // info-color (blue-500)
+            border: 1px solid #3b82f6; // info-color
+            color: #1e40af; // darken(info-color, 20%)
+        }
+    }
+
+    .section {
+        margin-bottom: 3rem;
+
+        .sectionTitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #6b7280; // secondary-color (gray-500)
+        }
+    }
+
+    .realtimeStats {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); // shadow-sm
+        padding: 1.5rem;
+
+        .statsGrid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+
+            @media (min-width: 768px) {
+                // md-breakpoint
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .statCard {
+                border: 1px solid #e5e7eb; // border-color (gray-200)
+                border-radius: 0.5rem;
+                padding: 1.25rem;
+
+                .statLabel {
+                    color: #4b5563; // gray-600
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    margin-bottom: 0.5rem;
+                }
+
+                .statValue {
+                    font-size: 1.75rem;
+                    font-weight: 700;
+                    color: #111827; // dark-color (gray-900)
+                    margin-bottom: 0.25rem;
+                }
+
+                .statSubtext {
+                    color: #6b7280; // gray-500
+                    font-size: 0.75rem;
+                }
+            }
+        }
+
+        .totalsGrid {
+            margin-top: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+
+            @media (min-width: 768px) {
+                // md-breakpoint
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    }
+
+    .noData {
+        background: #f3f4f6; // gray-100
+        border-radius: 0.5rem;
+        padding: 2rem;
+        text-align: center;
+        color: #4b5563; // gray-600
+
+        .interfaceInfo {
+            font-size: 0.75rem;
+            color: #6b7280; // gray-500
+            margin-top: 0.5rem;
+        }
+    }
+
+    .aggregatedTable {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); // shadow-sm
+
+        thead {
+            background-color: #f9fafb; // gray-50
+
+            th {
+                padding: 0.75rem 1.5rem;
+                text-align: left;
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: #4b5563; // gray-600
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+        }
+
+        tbody {
+            tr {
+                border-top: 1px solid #e5e7eb; // border-color (gray-200)
+
+                &:hover {
+                    background-color: #f9fafb; // gray-50
+                }
+
+                td {
+                    padding: 1rem 1.5rem;
+                    font-size: 0.875rem;
+
+                    &:first-child {
+                        font-weight: 500;
+                        color: #111827; // dark-color (gray-900)
+                    }
+
+                    &:not(:first-child) {
+                        color: #4b5563; // gray-600
+                    }
+                }
+            }
+        }
+    }
+}
