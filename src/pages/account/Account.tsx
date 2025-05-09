@@ -275,6 +275,9 @@ const Account = () => {
             UserDispatch({ type: "setProfilePicture", value: null });
             UserDispatch({ type: "setEmail", value: null });
             UserDispatch({ type: "setId", value: null });
+            UserDispatch({ type: "setToken", value: null });
+            UserDispatch({ type: "setStatsNetwork", value: null });
+            UserDispatch({ type: "setInterface", value: null });
             localStorage.clear();
             toast.success("Logged out");
             navi("/");

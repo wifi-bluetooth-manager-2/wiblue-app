@@ -16,8 +16,11 @@ const NavbarModel = () => {
     UserDispatch({ type: "setProfilePicture", value: null });
     UserDispatch({ type: "setEmail", value: null });
     UserDispatch({ type: "setId", value: null });
+    UserDispatch({ type: "setToken", value: null });
+    UserDispatch({ type: "setStatsNetwork", value: null });
+    UserDispatch({ type: "setInterface", value: null });
     localStorage.clear();
-    toast.error("Logged out due to invalid token");
+    toast.error("Logged out");
     navi("/");
   };
 

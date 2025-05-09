@@ -32,8 +32,9 @@ type UserAction =
       type: "setSeenNetworks";
       value: DBWifiNetwork[] | null;
     }
-  | { type: "setStatsNetwork"; value: WifiNetwork }
-  | { type: "setInterface"; value: string | null };
+  | { type: "setStatsNetwork"; value: WifiNetwork | null }
+  | { type: "setInterface"; value: string | null }
+  | { type: "setToken"; value: string | null };
 
 const UserReducer = (
   state: UserEntityType,
@@ -56,6 +57,8 @@ const UserReducer = (
       return { ...state, statsNetwork: action.value };
     case "setInterface":
       return { ...state, interface: action.value };
+    case "setToken":
+      return { ...state, token: action.value };
     default:
       return state;
   }
@@ -84,6 +87,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     seenNetworks: null,
     statsNetwork: null,
     interface: null,
+    token: null,
   } as UserEntityType);
 
   return (

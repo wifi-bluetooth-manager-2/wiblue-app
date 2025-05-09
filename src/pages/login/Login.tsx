@@ -71,6 +71,7 @@ const Login = () => {
             UserDispatch({ type: "setUsername", value: message.user.username });
             UserDispatch({ type: "setId", value: message.user.id });
             UserDispatch({ type: "setEmail", value: message.user.email });
+            UserDispatch({ type: "setToken", value: message.token });
             navi("/");
           }
         });
