@@ -35,7 +35,6 @@ export default function Stats() {
     lastCall: "",
   });
 
-  // Enhanced error handling with detailed logging
   const handleError = (err: unknown, context: string) => {
     const message =
       err instanceof Error ? err.message : "An unknown error occurred";
@@ -45,11 +44,9 @@ export default function Stats() {
     return message;
   };
 
-  // Verify token before making API calls
   const verifyToken = async () => {
-    if (!User?.token) {
-      throw new Error("Authentication token is missing");
-    }
+    if (!User?.token) throw new Error("Authentication token is missing");
+    if (!User?.userId) throw new Error("User ID is missing");
     return true;
   };
 
@@ -63,16 +60,15 @@ export default function Stats() {
 
       await verifyToken();
 
-      // First send to backend with detailed logging
-      console.log("Attempting to add network stats to backend...");
-      const addResult = await addNetworkStat(
+      console.log("Adding network stats to backend...");
+      const result = await addNetworkStat(
         User?.interface || "default-interface",
         stats.bytes_down,
         stats.bytes_up,
       );
-      console.log("Add network stats result:", addResult);
 
-      // Then refresh aggregated stats
+      console.log("Backend responded with:", result);
+
       console.log("Refreshing aggregated stats...");
       await fetchAggregatedNetworkStats();
 
@@ -91,17 +87,14 @@ export default function Stats() {
 
     const startListening = async () => {
       try {
-        if (!User?.interface) {
+        if (!User?.interface)
           throw new Error("Network interface not specified");
-        }
 
-        console.log("Starting Tauri event listener...");
         unlisten = await listen<TauriNetworkStats>(
           "network_stats",
           handleTauriNetworkStats,
         );
 
-        console.log("Starting network monitoring...");
         await invoke("monitor_network_stats", {
           interface: User.interface,
         });
@@ -125,15 +118,14 @@ export default function Stats() {
     try {
       await verifyToken();
 
-      console.log("Preparing addNetworkStat request...");
       const requestBody = {
-        user_id: User?.userId,
-        ssid: ssid,
-        rx_bytes: rx_bytes,
-        tx_bytes: tx_bytes,
+        user_id: User.userId,
+        ssid,
+        rx_bytes,
+        tx_bytes,
       };
 
-      console.log("Request payload:", requestBody);
+      console.log("Sending to backend:", requestBody);
 
       const response = await fetch(ApiLinks.add_network_stats, {
         method: "POST",
@@ -144,16 +136,13 @@ export default function Stats() {
         body: JSON.stringify(requestBody),
       });
 
-      console.log("Response status:", response.status);
+      const responseData = await response.json();
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("Backend error response:", errorData);
-        throw new Error(errorData.message || `HTTP ${response.status}`);
+        console.error("Backend error:", responseData);
+        throw new Error(responseData.message || `HTTP ${response.status}`);
       }
 
-      const responseData = await response.json();
-      console.log("Backend response data:", responseData);
       return responseData;
     } catch (err) {
       throw handleError(err, "adding network stat");
@@ -167,9 +156,8 @@ export default function Stats() {
     try {
       await verifyToken();
 
-      console.log("Fetching aggregated stats...");
       const response = await fetch(
-        `${ApiLinks.get_network_stats}/${User?.userId}`,
+        `${ApiLinks.get_network_stats}/${User?.userId}/`,
         {
           method: "GET",
           headers: {
@@ -178,16 +166,13 @@ export default function Stats() {
         },
       );
 
-      console.log("Aggregated stats response status:", response.status);
+      const data = await response.json();
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("Aggregated stats error:", errorData);
-        throw new Error(errorData.message || `HTTP ${response.status}`);
+        throw new Error(data.message || `HTTP ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log("Aggregated stats data:", data);
+      console.log("Fetched aggregated stats:", data);
 
       setAggregatedStats(Array.isArray(data) ? data : []);
       setApiStatus((prev) => ({
@@ -204,30 +189,25 @@ export default function Stats() {
 
   useEffect(() => {
     if (User?.userId && User?.token) {
-      console.log("Initial fetch of aggregated stats...");
       fetchAggregatedNetworkStats();
     }
   }, [User?.userId, User?.token]);
 
   const formatBytes = (bytes: number): string => {
     if (bytes === 0) return "0 Bytes";
-
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  // Test backend connection
   const testBackendConnection = async () => {
     try {
       setLoading(true);
-      console.log("Testing backend connection...");
-      const response = await fetch(ApiLinks.get_network_stats, {
-        method: "OPTIONS",
-      });
-      console.log("OPTIONS response:", response);
+      const response = await fetch(
+        `${ApiLinks.get_network_stats}/${User?.userId}/`,
+        { method: "OPTIONS" },
+      );
       setApiStatus((prev) => ({
         ...prev,
         lastCall: `Backend reachable at ${new Date().toLocaleTimeString()}`,
@@ -273,46 +253,12 @@ export default function Stats() {
 
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Real-time Network Stats</h2>
-
           {tauriStats ? (
             <div className={styles.realtimeStats}>
-              <div className={styles.statsGrid}>
-                <div className={styles.statCard}>
-                  <div className={styles.statLabel}>Download</div>
-                  <div className={styles.statValue}>
-                    {formatBytes(tauriStats.bytes_down)}
-                  </div>
-                  <div className={styles.statSubtext}>
-                    Speed: {formatBytes(tauriStats.speed_down)}/s
-                  </div>
-                </div>
-
-                <div className={styles.statCard}>
-                  <div className={styles.statLabel}>Upload</div>
-                  <div className={styles.statValue}>
-                    {formatBytes(tauriStats.bytes_up)}
-                  </div>
-                  <div className={styles.statSubtext}>
-                    Speed: {formatBytes(tauriStats.speed_up)}/s
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.totalsGrid}>
-                <div className={styles.statCard}>
-                  <div className={styles.statLabel}>Total Downloaded</div>
-                  <div className={styles.statValue}>
-                    {formatBytes(tauriStats.total_down)}
-                  </div>
-                </div>
-
-                <div className={styles.statCard}>
-                  <div className={styles.statLabel}>Total Uploaded</div>
-                  <div className={styles.statValue}>
-                    {formatBytes(tauriStats.total_up)}
-                  </div>
-                </div>
-              </div>
+              <p>Download: {formatBytes(tauriStats.bytes_down)}</p>
+              <p>Upload: {formatBytes(tauriStats.bytes_up)}</p>
+              <p>Speed ↓: {formatBytes(tauriStats.speed_down)}/s</p>
+              <p>Speed ↑: {formatBytes(tauriStats.speed_up)}/s</p>
             </div>
           ) : (
             <div className={styles.noData}>
@@ -326,22 +272,21 @@ export default function Stats() {
 
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Aggregated Network Usage</h2>
-
           {aggregatedStats.length > 0 ? (
             <table className={styles.aggregatedTable}>
               <thead>
                 <tr>
-                  <th>Network (SSID)</th>
-                  <th>Total Uploaded</th>
-                  <th>Total Downloaded</th>
+                  <th>SSID</th>
+                  <th>Total Download</th>
+                  <th>Total Upload</th>
                 </tr>
               </thead>
               <tbody>
                 {aggregatedStats.map((stat, index) => (
                   <tr key={index}>
-                    <td>{stat.ssid || "Unknown"}</td>
-                    <td>{formatBytes(stat.total_bytes_up)}</td>
+                    <td>{stat.ssid}</td>
                     <td>{formatBytes(stat.total_bytes_down)}</td>
+                    <td>{formatBytes(stat.total_bytes_up)}</td>
                   </tr>
                 ))}
               </tbody>
